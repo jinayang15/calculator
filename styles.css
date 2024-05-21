@@ -11,18 +11,19 @@
     --display-border-radius: 4px;
     --display-padding: 24px;
     --operator-button-color: #A167A5;
-    --operator-text-color: #C5EF8E;
+    --operator-text-color: #B3EFB2;
     --number-button-color:  #FFFFFF;
     --number-text-color: #6B4B96;
     --button-width: 75px;
     --button-height: 48px;
     --button-border-radius: 4px;
     --button-gap: 10px;
+    --row-gap: 16px;
 }
 
-html {
+* {
     box-sizing: border-box;
-    font-family: Verdana, Tahoma, Arial, sans-serif;
+    font-family: "Trebuchet MS", Verdana, sans-serif;
 }
 
 body {
@@ -34,10 +35,6 @@ body {
 }
 
 .main-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: var(--calculator-padding);
     width: var(--calculator-width);
     height: var(--calculator-height);
     background-color: var(--calculator-bg-color);
@@ -53,22 +50,17 @@ body {
     height: var(--display-height);
     background-color: var(--display-bg-color);
     border-radius: var(--display-border-radius);
-    flex: 1;
-}
-
-#display-text {
-    margin: var(--display-padding);
-    width: 100%;
-    text-align: right;
+    padding: var(--display-padding);
+    font-family: "Andale Mono", "Courier New", Courier, monospace;
     font-size: 2.5em;
     color: var(--display-text-color);
+    text-align: right;
 }
 
 .input-container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    flex: 3;
 }
 
 .row {
@@ -76,6 +68,7 @@ body {
     justify-content: center;
     gap: var(--button-gap);
     width: 100%;
+    margin-top: var(--row-gap);
 }
 
 .button {
@@ -87,7 +80,6 @@ body {
     border-radius: var(--button-border-radius);
     text-align: center;
     flex: 1;
-    flex-shrink: 0;
     font-size: 1.5rem;
     font-weight: bold;
 }
@@ -103,6 +95,6 @@ body {
 }
 
 #zero {
-    flex: 2.11;
+    flex: 2.13;
     width: calc(2 * var(--button-width) + var(--button-gap));
 }
