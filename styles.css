@@ -57,12 +57,6 @@ body {
     text-align: right;
 }
 
-.input-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
 .row {
     display: flex;
     justify-content: center;
