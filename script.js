@@ -38,7 +38,7 @@ function calculateResult(expressionArr) {
     const digitLimit = 11; 
     // round number to prevent overflow
     const result = Math.round(operate(...expressionArr) * Math.pow(10, digitLimit - 1)) / Math.pow(10, digitLimit - 1);
-    return result;
+    return String(result);
 }
 
 function onNumClick(button, operatorSelected, expression, display) {
@@ -65,7 +65,7 @@ function onNumClick(button, operatorSelected, expression, display) {
 
 function onOperatorClick(button, operatorSelected, expression, display) {
     // regex to split string into numbers and operators
-    const expressionArr = String(expression).match(/(\d+(\.\d+)?)|[\+-×÷]/g);
+    const expressionArr = String(expression).match(/(\.\d+)|(\d+(\.\d+)?)|[\+-×÷]/g);
     switch (button.id) {
         case "equal":
             const result = calculateResult(expressionArr);
@@ -114,14 +114,17 @@ function main() {
     buttons.forEach((button) => {
         button.addEventListener("click", () => {
             let returned;
-            if (button.classList.contains("num")) {
-                returned = onNumClick(button, operatorSelected, expression, display);
+            // do not allow for operations once an error occurs but allow the user to clear
+            if (expression != "NaN" || button.id == "clear") {
+                if (button.classList.contains("num")) {
+                    returned = onNumClick(button, operatorSelected, expression, display);
+                }
+                else if (button.classList.contains("operator")) {
+                    returned = onOperatorClick(button, operatorSelected, expression, display);
+                }
+                expression = returned.expression;
+                operatorSelected = returned.operatorSelected;
             }
-            else if (button.classList.contains("operator")) {
-                returned = onOperatorClick(button, operatorSelected, expression, display);
-            }
-            expression = returned.expression;
-            operatorSelected = returned.operatorSelected;
         });
     });
 }
