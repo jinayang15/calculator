@@ -33,15 +33,43 @@ function operate(a, operator = "=", b = a) {
     }
 }
 
+function convertToScientificNotation(num, digitLimit) {
+    let result = "";
+    let exp = 0;
+    let numDigitsExp;
+    if (num >= 1) {
+        while (num / 10 > 1) {
+            exp++;
+            num /= 10;
+        }
+    }
+    else {
+        while (num * 10 < 10) {
+            exp--;
+            num *= 10;
+        }
+    }
+    numDigitsExp = String(exp).length;
+    num = Math.round(num * Math.pow(10, digitLimit - numDigitsExp - 3)) / Math.pow(10, digitLimit - numDigitsExp - 3);
+    result = String(num) + "e" + String(exp);
+    return result;
+}
+
 function calculateResult(expressionArr) {
     // number of digits that can be displayed on the calculator accounting for the decimal point
-    const digitLimit = 11; 
+    const digitLimit = 11;
+    let result = operate(...expressionArr);
     // round number to prevent overflow
-    const result = Math.round(operate(...expressionArr) * Math.pow(10, digitLimit - 1)) / Math.pow(10, digitLimit - 1);
+    if (String(result).length > digitLimit) {
+        result = convertToScientificNotation(result, digitLimit);
+    } else {
+        result = Math.round(result * Math.pow(10, digitLimit - 1)) / Math.pow(10, digitLimit - 1);
+    }
     return String(result);
 }
 
 function onNumClick(button, operatorSelected, expression, display) {
+    const expressionArr = String(expression).match(/(\d+(\.\d+)?e(-)?(\d+))|(\.\d+)|(\d+(\.\d+)?)|[\+-×÷]/g);
     // replaces the number on the display with the next number click if the current expression is 0
     if (expression == "0" && button.id != "decimal") {
         expression = button.textContent;
@@ -53,7 +81,7 @@ function onNumClick(button, operatorSelected, expression, display) {
         display.textContent = button.textContent;
         operatorSelected = false;
     }
-    else {
+    else if (expressionArr.at(-1).length < 11) {
         expression += button.textContent;
         display.textContent += button.textContent;
     }
@@ -65,7 +93,7 @@ function onNumClick(button, operatorSelected, expression, display) {
 
 function onOperatorClick(button, operatorSelected, expression, display) {
     // regex to split string into numbers and operators
-    const expressionArr = String(expression).match(/(\.\d+)|(\d+(\.\d+)?)|[\+-×÷]/g);
+    const expressionArr = String(expression).match(/(\d+(\.\d+)?e(-)?(\d+))|(\.\d+)|(\d+(\.\d+)?)|[\+-×÷]/g);
     switch (button.id) {
         case "equal":
             const result = calculateResult(expressionArr);
@@ -84,7 +112,7 @@ function onOperatorClick(button, operatorSelected, expression, display) {
         case "minus":
             // replaces previous operator when another is clicked
             if (operatorSelected) {
-                expression = expression.slice(0,-1) + button.textContent;   
+                expression = expression.slice(0, -1) + button.textContent;
             }
             // evaluate the result before continuing other operations even if equal sign is not clicked
             else if (expressionArr.length == 3) {
