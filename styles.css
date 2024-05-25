@@ -19,6 +19,15 @@
     --button-border-radius: 4px;
     --button-gap: 10px;
     --row-gap: 16px;
+    --display-border: #310071;
+    --main-border: #AA8BBB;
+    --light-border-weight: 3px;
+    --heavy-border-weight: 6px;
+    --clicked-button-border: #8F5093;
+    --operator-button-border: #8D4F92;
+    --operater-hover-color: #B07EB4;
+    --num-button-border: #AA8BBB;
+    --num-hover-color: #F1EBF6;
 }
 
 * {
@@ -40,6 +49,8 @@ body {
     background-color: var(--calculator-bg-color);
     padding: var(--calculator-padding);
     border-radius: var(--calculator-border-radius);
+    border-bottom: var(--heavy-border-weight) solid var(--main-border);
+    border-right: var(--heavy-border-weight) solid var(--main-border);
 }
 
 .display {
@@ -55,6 +66,8 @@ body {
     font-size: 2.5em;
     color: var(--display-text-color);
     text-align: right;
+    border-top: var(--light-border-weight) solid var(--display-border);
+    border-left: var(--light-border-weight) solid var(--display-border);
 }
 
 .row {
@@ -76,19 +89,47 @@ body {
     flex: 1;
     font-size: 1.5rem;
     font-weight: bold;
+    border: none;   
 }
 
 .operator {
     background-color: var(--operator-button-color);
     color: var(--operator-text-color);
+    border-bottom: var(--light-border-weight) solid var(--operator-button-border);
+    border-right: var(--light-border-weight) solid var(--operator-button-border);
 }
 
 .num {
     background-color: var(--number-button-color);
     color: var(--number-text-color);
+    border-bottom: var(--light-border-weight) solid var(--num-button-border);
+    border-right: var(--light-border-weight) solid var(--num-button-border);
 }
 
 #zero {
-    flex: 2.13;
+    flex: 2.4;
     width: calc(2 * var(--button-width) + var(--button-gap));
+}
+
+.num:hover {
+    background-color: var(--num-hover-color);
+}
+
+.num:active, .num.active {
+    border-top: var(--light-border-weight) solid var(--num-button-border);
+    border-left: var(--light-border-weight) solid var(--num-button-border);
+    border-bottom: none;
+    border-right: none;
+}
+
+.operator:hover {
+    background-color: var(--operater-hover-color);
+}
+
+.operator:active, .operator.active{
+    border-top: var(--light-border-weight) solid var(--operator-button-border);
+    border-left: var(--light-border-weight) solid var(--operator-button-border);
+    border-bottom: none;
+    border-right: none;
+    background-color: var(--operater-hover-color);
 }

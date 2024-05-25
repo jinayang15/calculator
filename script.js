@@ -77,6 +77,7 @@ function onNumClick(button, operatorSelected, decimalSelected, expression, displ
         expression += button.textContent;
         display.textContent = button.textContent;
         operatorSelected = false;
+        deactivateAllButtons();
     }
     else if (button.id == "decimal") {
         if (!decimalSelected) {
@@ -146,7 +147,7 @@ function onOperatorClick(button, operatorSelected, decimalSelected, expression, 
             }
             // evaluate the result before continuing other operations even if equal sign is not clicked
             else if (expressionArr.length == 3) {
-                const result = calculateResult(expressionArr);
+                const result = calculateResult(expressionArr, digitLimit);
                 expression = result + button.textContent;
                 display.textContent = result;
                 operatorSelected = true;
@@ -155,11 +156,22 @@ function onOperatorClick(button, operatorSelected, decimalSelected, expression, 
                 expression += button.textContent;
                 operatorSelected = true;
             }
+            deactivateAllButtons();
+            activateButton(button);
     }
     return {
         expression: expression,
         operatorSelected: operatorSelected,
     }
+}
+
+function deactivateAllButtons() {
+    const buttons = document.querySelectorAll(".button");
+    buttons.forEach((button) => button.classList.remove("active"));
+}
+
+function activateButton(button) {
+    button.classList.add("active");
 }
 
 function main() {
