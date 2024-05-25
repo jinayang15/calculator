@@ -109,11 +109,13 @@ function onOperatorClick(button, operatorSelected, decimalSelected, expression, 
             expression = result;
             display.textContent = result;
             operatorSelected = false;
+            deactivateAllButtons();
             break;
         case "clear":
             expression = "0";
             display.textContent = "0";
             operatorSelected = false;
+            deactivateAllButtons();
             break;
         case "percentage":
             if (!operatorSelected) {
