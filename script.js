@@ -85,7 +85,7 @@ function onNumClick(button, operatorSelected, decimalSelected, expression, displ
         }
     }
     // replaces the number on the display with the next number click if the current expression is 0
-    else if (expression == "0") {
+    else if (expressionArr[expressionArr.length-1] == "0") {
         expression = button.textContent;
         display.textContent = button.textContent;
     }
@@ -123,6 +123,19 @@ function onOperatorClick(button, operatorSelected, decimalSelected, expression, 
                 expression = expressionArr.join("");
                 break;
             }
+        case "backspace":
+            if (!operatorSelected) {
+                const lastNumber = expressionArr[expressionArr.length - 1];
+                if (lastNumber.length > 1) {
+                    expressionArr[expressionArr.length-1] = lastNumber.slice(0, -1);
+                }
+                else {
+                    expressionArr[expressionArr.length-1] = "0"
+                }
+                expression = expressionArr.join("");
+                display.textContent = expressionArr[expressionArr.length-1];
+            }
+            break;
         case "divide":
         case "multiply":
         case "plus":
