@@ -50,53 +50,61 @@ function convertToScientificNotation(num, digitLimit) {
         }
     }
     numDigitsExp = String(exp).length;
-    num = Math.round(num * Math.pow(10, digitLimit - numDigitsExp - 3)) / Math.pow(10, digitLimit - numDigitsExp - 3);
+    num = roundResult(num, digitLimit - numDigitsExp - 3);
     result = String(num) + "e" + String(exp);
     return result;
 }
 
-function calculateResult(expressionArr) {
-    // number of digits that can be displayed on the calculator accounting for the decimal point
-    const digitLimit = 11;
+function roundResult(num, digitLimit) {
+    return Math.round(num * Math.pow(10, digitLimit)) / Math.pow(10, digitLimit);
+}
+
+function calculateResult(expressionArr, digitLimit) {
     let result = operate(...expressionArr);
     // round number to prevent overflow
     if (String(result).length > digitLimit) {
         result = convertToScientificNotation(result, digitLimit);
     } else {
-        result = Math.round(result * Math.pow(10, digitLimit - 1)) / Math.pow(10, digitLimit - 1);
+        result = roundResult(result, digitLimit-1);
     }
     return String(result);
 }
 
-function onNumClick(button, operatorSelected, expression, display) {
+function onNumClick(button, operatorSelected, decimalSelected, expression, display, digitLimit) {
     const expressionArr = String(expression).match(/(\d+(\.\d+)?e(-)?(\d+))|(\.\d+)|(\d+(\.\d+)?)|[\+-×÷]/g);
-    // replaces the number on the display with the next number click if the current expression is 0
-    if (expression == "0" && button.id != "decimal") {
-        expression = button.textContent;
-        display.textContent = button.textContent;
-    }
     // displays the new number after operator has been clicked
-    else if (operatorSelected) {
+    if (operatorSelected) {
         expression += button.textContent;
         display.textContent = button.textContent;
         operatorSelected = false;
     }
-    else if (expressionArr.at(-1).length < 11) {
+    else if (button.id == "decimal") {
+        if (!decimalSelected) {
+            expression += button.textContent;
+            display.textContent += button.textContent;
+        }
+    }
+    // replaces the number on the display with the next number click if the current expression is 0
+    else if (expression == "0") {
+        expression = button.textContent;
+        display.textContent = button.textContent;
+    }
+    else if (expressionArr.at(-1).length < digitLimit) {
         expression += button.textContent;
         display.textContent += button.textContent;
     }
     return {
         expression: expression,
-        operatorSelected: operatorSelected
+        operatorSelected: operatorSelected,
     }
 }
 
-function onOperatorClick(button, operatorSelected, expression, display) {
+function onOperatorClick(button, operatorSelected, decimalSelected, expression, display, digitLimit) {
     // regex to split string into numbers and operators
-    const expressionArr = String(expression).match(/(\d+(\.\d+)?e(-)?(\d+))|(\.\d+)|(\d+(\.\d+)?)|[\+-×÷]/g);
+    const expressionArr = String(expression).match(/(\d+(\.\d+)?e(-)?(\d+))|(\.\d+)|(\d+(\.)?(\d+)?)|[\+-×÷]/g);
     switch (button.id) {
         case "equal":
-            const result = calculateResult(expressionArr);
+            const result = calculateResult(expressionArr, digitLimit);
             expression = result;
             display.textContent = result;
             operatorSelected = false;
@@ -106,6 +114,15 @@ function onOperatorClick(button, operatorSelected, expression, display) {
             display.textContent = "0";
             operatorSelected = false;
             break;
+        case "percentage":
+            if (!operatorSelected) {
+                const lastNumber = Number(expressionArr[expressionArr.length - 1]);
+                const percent = calculateResult([lastNumber, "×", "0.01"], digitLimit);
+                expressionArr[expressionArr.length - 1] = percent;
+                display.textContent = percent;
+                expression = expressionArr.join("");
+                break;
+            }
         case "divide":
         case "multiply":
         case "plus":
@@ -125,18 +142,20 @@ function onOperatorClick(button, operatorSelected, expression, display) {
                 expression += button.textContent;
                 operatorSelected = true;
             }
-            break;
     }
     return {
         expression: expression,
-        operatorSelected: operatorSelected
+        operatorSelected: operatorSelected,
     }
 }
 
 function main() {
     const display = document.querySelector(".display");
     const buttons = document.querySelectorAll(".button");
+    // number of digits that can be displayed on the calculator accounting for the decimal point
+    const digitLimit = 11;
     let operatorSelected = false;
+    let decimalSelected = false;
     let expression = "0";
 
     buttons.forEach((button) => {
@@ -145,13 +164,14 @@ function main() {
             // do not allow for operations once an error occurs but allow the user to clear
             if (expression != "NaN" || button.id == "clear") {
                 if (button.classList.contains("num")) {
-                    returned = onNumClick(button, operatorSelected, expression, display);
+                    returned = onNumClick(button, operatorSelected, decimalSelected, expression, display, digitLimit);
                 }
                 else if (button.classList.contains("operator")) {
-                    returned = onOperatorClick(button, operatorSelected, expression, display);
+                    returned = onOperatorClick(button, operatorSelected, decimalSelected, expression, display, digitLimit);
                 }
                 expression = returned.expression;
                 operatorSelected = returned.operatorSelected;
+                decimalSelected = display.textContent.includes(".");
             }
         });
     });
