@@ -5,4 +5,4 @@ Live: https://jinayang15.github.io/calculator/
 #### Initial Design
 ![](/images/calculator-design.png)
 #### Final Design
-![](/images/final-calculator-design.png | width=100)
+<img src="/images/final-calculator-design.png" width="200">
